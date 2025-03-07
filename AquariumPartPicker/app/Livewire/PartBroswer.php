@@ -200,6 +200,7 @@ class PartBrowser extends Component
         
         return view('livewire.part-browser', [
             'components' => $components,
+            'componentType' => $this->componentType,
             'componentTitle' => $this->componentTitle,
             'componentDescription' => $this->componentDescription
         ]);
