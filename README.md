@@ -31,8 +31,8 @@ AquariumPartPicker is a web application inspired by PCPartPicker, designed to he
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/aquarium-part-picker.git
-cd aquarium-part-picker
+git clone https://github.com/toxicodryas/AquariumPartPicker.git
+cd AquariumPartPicker
 ```
 
 2. Install PHP dependencies:
@@ -60,7 +60,7 @@ php artisan key:generate
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=aquarium_part_picker
+DB_DATABASE=AquariumPartPicker
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
@@ -87,13 +87,13 @@ The application should now be running at `http://localhost:8000`.
 1. Create a MySQL database:
 ```bash
 mysql -u root -p
-CREATE DATABASE aquarium_part_picker;
+CREATE DATABASE AquariumPartPicker;
 ```
 
 2. Create a dedicated user (optional but recommended):
 ```sql
 CREATE USER 'aquarium_user'@'localhost' IDENTIFIED BY 'your_password_here';
-GRANT ALL PRIVILEGES ON aquarium_part_picker.* TO 'aquarium_user'@'localhost';
+GRANT ALL PRIVILEGES ON AquariumPartPicker.* TO 'aquarium_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
