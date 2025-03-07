@@ -66,23 +66,67 @@ class BuildCreator extends Component
 
     public function checkCompatibility()
     {
-        // We'll implement this later with real compatibility logic
-        // For now, just a placeholder to illustrate the concept
         if (!$this->selectedTankId) {
             return;
         }
 
         $tank = AquariumTank::find($this->selectedTankId);
+        $tankVolume = $tank->volume_gallons;
 
-        // Example: If filter is too powerful for the tank, clear it
+        // Filter compatibility check
         if ($this->selectedFilterId) {
             $filter = Filter::find($this->selectedFilterId);
-            if ($filter->min_tank_size > $tank->volume_gallons) {
-                $this->selectedFilterId = null;
+
+            // Check if filter is appropriate for tank size
+            if ($filter->min_tank_size > $tankVolume) {
+                $this->addWarning('filter', 'This filter is rated for larger tanks and may be too powerful.');
+            } elseif ($filter->max_tank_size < $tankVolume) {
+                $this->addWarning('filter', 'This filter may not provide adequate filtration for your tank size.');
+            } else {
+                $this->removeWarning('filter');
             }
         }
 
-        // Similar logic for other components...
+        // Heater compatibility check
+        if ($this->selectedHeaterId) {
+            $heater = Heater::find($this->selectedHeaterId);
+
+            // Assume heaters have min_tank_size and max_tank_size properties
+            if ($heater->min_tank_size > $tankVolume) {
+                $this->addWarning('heater', 'This heater may be too powerful for your tank size.');
+            } elseif ($heater->max_tank_size < $tankVolume) {
+                $this->addWarning('heater', 'This heater may not provide adequate heating for your tank size.');
+            } else {
+                $this->removeWarning('heater');
+            }
+        }
+
+        // Light compatibility check
+        if ($this->selectedLightId && $tank) {
+            $light = Light::find($this->selectedLightId);
+
+            // Check if light fixture is appropriate length for tank
+            if ($light->length_inches > $tank->length_inches) {
+                $this->addWarning('light', 'This light fixture is too long for your tank.');
+            } else {
+                $this->removeWarning('light');
+            }
+        }
+    }
+
+    // Helper methods for warnings
+    public $warnings = [];
+
+    public function addWarning($component, $message)
+    {
+        $this->warnings[$component] = $message;
+    }
+
+    public function removeWarning($component)
+    {
+        if (isset($this->warnings[$component])) {
+            unset($this->warnings[$component]);
+        }
     }
 
     public function saveBuild()
