@@ -114,7 +114,7 @@ class PartBrowser extends Component
 
     public function getModelForType($type)
     {
-        // Expanded version of your original function
+        // Check which models actually exist
         switch($type) {
             case 'aquarium_tanks':
                 return AquariumTank::query();
@@ -124,19 +124,10 @@ class PartBrowser extends Component
                 return Light::query();
             case 'heaters':
                 return Heater::query();
-            case 'sumps':
-                // Return empty query or placeholder if model doesn't exist
-                return new \Illuminate\Database\Eloquent\Builder(new \Illuminate\Database\Query\Builder(
-                    app('db')->connection()
-                ));
-            case 'skimmers':
-                // Same handling for other missing models
-                return new \Illuminate\Database\Eloquent\Builder(new \Illuminate\Database\Query\Builder(
-                    app('db')->connection()
-                ));
-            // Similar handling for other missing models
             default:
-                return AquariumTank::query();
+                // For any other component type, return an empty collection in query form
+                // that can handle pagination and other query operations
+                return app('db')->table('aquarium_tanks')->whereRaw('1 = 0');
         }
     }
 
