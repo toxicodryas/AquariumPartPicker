@@ -87,6 +87,52 @@ class BuildCreator extends Component
 
     public function saveBuild()
     {
-        // We'll implement this in Phase 3 after adding authentication
+        $this->validate([
+            'buildName' => 'required|min:3',
+            'selectedTankId' => 'required',
+            // Add other validations as needed
+        ]);
+
+        // Calculate total price
+        $tank = AquariumTank::find($this->selectedTankId);
+        $filter = $this->selectedFilterId ? Filter::find($this->selectedFilterId) : null;
+        $light = $this->selectedLightId ? Light::find($this->selectedLightId) : null;
+        $heater = $this->selectedHeaterId ? Heater::find($this->selectedHeaterId) : null;
+
+        $totalPrice = collect([$tank, $filter, $light, $heater])
+            ->filter()
+            ->sum('price');
+
+        // Create the build
+        $build = Build::create([
+            'user_id' => auth()->id(),
+            'name' => $this->buildName,
+            'total_price' => $totalPrice,
+            'is_public' => true, // Default to public, could add a toggle
+        ]);
+
+        // Add build items
+        if ($tank) {
+            BuildItem::create([
+                'build_id' => $build->id,
+                'component_type' => 'AquariumTank',
+                'component_id' => $tank->id,
+                'price' => $tank->price,
+            ]);
+        }
+
+        // Add other components similarly
+        if ($filter) {
+            BuildItem::create([
+                'build_id' => $build->id,
+                'component_type' => 'Filter',
+                'component_id' => $filter->id,
+                'price' => $filter->price,
+            ]);
+        }
+        // Repeat for light, heater, etc.
+
+        session()->flash('message', 'Build saved successfully!');
+        return redirect()->route('builds.show', $build);
     }
 }

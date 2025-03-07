@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('builds', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->boolean('is_public')->default(false);
+            $table->decimal('total_price', 10, 2);
             $table->timestamps();
         });
     }
